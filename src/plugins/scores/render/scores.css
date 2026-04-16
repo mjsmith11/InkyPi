@@ -1,0 +1,248 @@
+/* ── Base ────────────────────────────────────────────────────────────────── */
+body {
+    background-color: #111827;
+    color: #f9fafb;
+    font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+}
+
+.scores-root {
+    width: 100%;
+    height: 100%;
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── Game Card ───────────────────────────────────────────────────────────── */
+.game-card {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    padding: 1vw 2vw;
+}
+
+/* Faint team-color gradient bleeding in from each side */
+.card-bg {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to right,
+        var(--away-color, #333) 0%,
+        transparent 35%,
+        transparent 65%,
+        var(--home-color, #333) 100%
+    );
+    opacity: 0.2;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Divider between stacked cards in split layout */
+.layout-split .game-card:not(:last-child) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Grid layout */
+.layout-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1vw;
+    padding: 0.5vw;
+}
+
+.layout-grid .game-card {
+    flex: unset;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 0.8vw;
+    padding: 1vw 1.5vw;
+}
+
+/* ── Team Column ─────────────────────────────────────────────────────────── */
+.team-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4vw;
+    flex: 2;
+    position: relative;
+    z-index: 1;
+}
+
+.away-col { align-items: flex-start; }
+.home-col { align-items: flex-end; }
+
+.team-logo {
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+/* Logo sizes by layout */
+.layout-single .team-logo {
+    width: 18vw;
+    height: 18vw;
+    max-height: 42vh;
+}
+
+.layout-split .team-logo {
+    width: 10vw;
+    height: 10vw;
+    max-height: 18vh;
+}
+
+.layout-grid .team-logo {
+    width: 9vw;
+    height: 9vw;
+    max-height: 16vh;
+}
+
+.team-abbr {
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.layout-single .team-abbr { font-size: 2.8vw; }
+.layout-split  .team-abbr { font-size: 2.2vw; }
+.layout-grid   .team-abbr { font-size: 1.8vw; }
+
+.team-score {
+    font-weight: 800;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.team-score.winner {
+    color: #f9fafb;
+}
+
+.layout-single .team-score { font-size: 9vw; }
+.layout-split  .team-score { font-size: 5.5vw; }
+.layout-grid   .team-score { font-size: 4.5vw; }
+
+/* ── Game Center Column ──────────────────────────────────────────────────── */
+.game-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1vw;
+    flex: 1;
+    position: relative;
+    z-index: 1;
+}
+
+.at-sep {
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.35);
+}
+
+.layout-single .at-sep { font-size: 3vw; }
+.layout-split  .at-sep { font-size: 2.2vw; }
+.layout-grid   .at-sep { font-size: 1.8vw; }
+
+.status-badge {
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 0.5vw;
+    padding: 0.3vw 0.8vw;
+    text-align: center;
+    white-space: nowrap;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.status-badge.live {
+    background: rgba(34, 197, 94, 0.18);
+    color: #4ade80;
+    border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+.layout-single .status-badge { font-size: 2vw; }
+.layout-split  .status-badge { font-size: 1.7vw; }
+.layout-grid   .status-badge { font-size: 1.4vw; }
+
+/* ── No Active Games / Upcoming ──────────────────────────────────────────── */
+.no-games-header {
+    font-size: 3vw;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.75);
+    padding-bottom: 1.5vh;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 1vh;
+}
+
+.upcoming-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+    flex: 1;
+    overflow: hidden;
+}
+
+.upcoming-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1.5vw;
+    padding: 1vh 1.5vw;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 0.5vw;
+    border-left: 0.5vw solid transparent;
+    flex: 1;
+}
+
+.up-logo,
+.up-opp-logo {
+    width: 5vw;
+    height: 5vw;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.up-team {
+    font-size: 2.4vw;
+    font-weight: 700;
+    color: #f9fafb;
+}
+
+.up-sep {
+    font-size: 1.8vw;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.up-opp {
+    font-size: 2.1vw;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    flex: 1;
+}
+
+.up-when {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.1vh;
+    flex-shrink: 0;
+}
+
+.up-date {
+    font-size: 1.6vw;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.up-time {
+    font-size: 2vw;
+    font-weight: 600;
+    color: #f9fafb;
+}
+
+.no-upcoming {
+    font-size: 2vw;
+    color: rgba(255, 255, 255, 0.35);
+    text-align: center;
+    padding: 4vh 0;
+}
