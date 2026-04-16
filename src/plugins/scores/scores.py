@@ -8,12 +8,14 @@ logger = logging.getLogger(__name__)
 
 # ─── Hardcoded tracked teams ───────────────────────────────────────────────────
 TRACKED_TEAMS = [
-    {"name": "Chicago White Sox",   "abbreviation": "CWS", "sport": "baseball",   "league": "mlb",                     "id": "4"},
-    {"name": "Chicago Cubs",        "abbreviation": "CHC", "sport": "baseball",   "league": "mlb",                     "id": "16"},
-    {"name": "Indianapolis Colts",  "abbreviation": "IND", "sport": "football",   "league": "nfl",                     "id": "11"},
-    {"name": "Indiana Pacers",      "abbreviation": "IND", "sport": "basketball", "league": "nba",                     "id": "15"},
-    {"name": "Purdue Boilermakers", "abbreviation": "PUR", "sport": "basketball", "league": "mens-college-basketball", "id": "2509"},
-    {"name": "Chicago Blackhawks",  "abbreviation": "CHI", "sport": "hockey",     "league": "nhl",                     "id": "4"},
+    {"name": "Chicago White Sox",      "abbreviation": "CWS",  "sport": "baseball",    "league": "mlb",                       "id": "4"},
+    {"name": "Chicago Cubs",           "abbreviation": "CHC",  "sport": "baseball",    "league": "mlb",                       "id": "16"},
+    {"name": "Indianapolis Colts",     "abbreviation": "IND",  "sport": "football",    "league": "nfl",                       "id": "11"},
+    {"name": "Indiana Pacers",         "abbreviation": "IND",  "sport": "basketball",  "league": "nba",                       "id": "15"},
+    {"name": "Purdue Boilermakers",    "abbreviation": "PUR",  "sport": "basketball",  "league": "mens-college-basketball",   "id": "2509"},
+    {"name": "Chicago Blackhawks",     "abbreviation": "CHI",  "sport": "hockey",      "league": "nhl",                       "id": "4"},
+    {"name": "Valparaiso Beacons",     "abbreviation": "VAL",  "sport": "volleyball",  "league": "womens-college-volleyball", "id": "2674"},
+    {"name": "Ball State Cardinals",   "abbreviation": "BSU",  "sport": "volleyball",  "league": "womens-college-volleyball", "id": "2050"},
 ]
 
 ESPN_SCOREBOARD_URL = "https://site.api.espn.com/apis/site/v2/sports/{sport}/{league}/scoreboard"
@@ -140,6 +142,31 @@ class Scores(BasePlugin):
             else:
                 away = entry
 
+        # For volleyball, extract set-by-set linescores
+        sets = []
+        if matched_team["sport"] == "volleyball":
+            away_ls, home_ls = {}, {}
+            for c in competitors:
+                for ls in c.get("linescores", []):
+                    p = ls.get("period", {})
+                    period_num = p.get("number", 0) if isinstance(p, dict) else int(p or 0)
+                    disp = ls.get("displayValue", str(int(ls.get("value", 0))))
+                    won  = ls.get("winner", False)
+                    if c.get("homeAway") == "away":
+                        away_ls[period_num] = {"score": disp, "winner": won}
+                    else:
+                        home_ls[period_num] = {"score": disp, "winner": won}
+            for pnum in sorted(set(list(away_ls.keys()) + list(home_ls.keys()))):
+                a = away_ls.get(pnum, {"score": "-", "winner": False})
+                h = home_ls.get(pnum, {"score": "-", "winner": False})
+                sets.append({
+                    "period":       pnum,
+                    "away_score":   a["score"],
+                    "home_score":   h["score"],
+                    "away_winner":  a["winner"],
+                    "home_winner":  h["winner"],
+                })
+
         return {
             "away":         away,
             "home":         home,
@@ -147,6 +174,7 @@ class Scores(BasePlugin):
             "is_final":     state == "post",
             "is_live":      state == "in",
             "sport":        matched_team["sport"],
+            "sets":         sets,
         }
 
     # ── Upcoming games ─────────────────────────────────────────────────────────

@@ -28,32 +28,49 @@
   {% else %}
   {# ── Active Game Cards ────────────────────────────────────────────────── #}
   {% for game in games %}
-  <div class="game-card" style="--away-color: {{ game.away.color }}; --home-color: {{ game.home.color }}">
+  <div class="game-card{% if game.sport == 'volleyball' %} volleyball{% endif %}" style="--away-color: {{ game.away.color }}; --home-color: {{ game.home.color }}">
     <div class="card-bg"></div>
 
-    {# Away team #}
-    <div class="team-col away-col">
-      <img class="team-logo" src="{{ game.away.logo }}" onerror="this.style.display='none'" alt="{{ game.away.abbreviation }}">
-      <div class="team-abbr">{{ game.away.abbreviation }}</div>
-      {% if game.is_final or game.is_live %}
-      <div class="team-score{% if game.away.is_winner %} winner{% endif %}">{{ game.away.score }}</div>
-      {% endif %}
+    <div class="card-main">
+      {# Away team #}
+      <div class="team-col away-col">
+        <img class="team-logo" src="{{ game.away.logo }}" onerror="this.style.display='none'" alt="{{ game.away.abbreviation }}">
+        <div class="team-abbr">{{ game.away.abbreviation }}</div>
+        {% if game.is_final or game.is_live %}
+        <div class="team-score{% if game.away.is_winner %} winner{% endif %}">{{ game.away.score }}</div>
+        {% endif %}
+      </div>
+
+      {# Center #}
+      <div class="game-center">
+        <div class="at-sep">@</div>
+        <div class="status-badge{% if game.is_live %} live{% endif %}">{{ game.status_label }}</div>
+      </div>
+
+      {# Home team (mirrored: score top, name, logo bottom) #}
+      <div class="team-col home-col">
+        {% if game.is_final or game.is_live %}
+        <div class="team-score{% if game.home.is_winner %} winner{% endif %}">{{ game.home.score }}</div>
+        {% endif %}
+        <div class="team-abbr">{{ game.home.abbreviation }}</div>
+        <img class="team-logo" src="{{ game.home.logo }}" onerror="this.style.display='none'" alt="{{ game.home.abbreviation }}">
+      </div>
     </div>
 
-    {# Center #}
-    <div class="game-center">
-      <div class="at-sep">@</div>
-      <div class="status-badge{% if game.is_live %} live{% endif %}">{{ game.status_label }}</div>
+    {# Volleyball: set-by-set scores #}
+    {% if game.sport == 'volleyball' and game.sets %}
+    <div class="set-scores">
+      {% for s in game.sets %}
+      {% set is_current = game.is_live and loop.last %}
+      <div class="set-item{% if is_current %} live-set{% endif %}">
+        <span class="set-label">S{{ s.period }}</span>
+        <span class="set-away{% if s.away_winner %} winner{% endif %}">{{ s.away_score }}</span>
+        <span class="set-dash">–</span>
+        <span class="set-home{% if s.home_winner %} winner{% endif %}">{{ s.home_score }}</span>
+      </div>
+      {% endfor %}
     </div>
-
-    {# Home team (mirrored: score top, name, logo bottom) #}
-    <div class="team-col home-col">
-      {% if game.is_final or game.is_live %}
-      <div class="team-score{% if game.home.is_winner %} winner{% endif %}">{{ game.home.score }}</div>
-      {% endif %}
-      <div class="team-abbr">{{ game.home.abbreviation }}</div>
-      <img class="team-logo" src="{{ game.home.logo }}" onerror="this.style.display='none'" alt="{{ game.home.abbreviation }}">
-    </div>
+    {% endif %}
   </div>
   {% endfor %}
   {% endif %}
