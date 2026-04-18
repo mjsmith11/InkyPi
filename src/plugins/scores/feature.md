@@ -52,11 +52,28 @@ The plugin delegates to `BasePlugin.render_image()` with `scores.html` / `scores
 
 ## Tests
 
-Test script: `scripts/test_scores_volleyball.py`
+### Scripts
 
-Runs five scenarios by mocking `requests.get` and rendering the plugin directly to PNG, then stacks all outputs into a single composite image saved to `/tmp/scores_volleyball_test.png`.
+| Script | Purpose | Output |
+|--------|---------|--------|
+| `scripts/test_scores.py` | Live ESPN API smoke-test across 3 resolutions × 2 orientations | `/tmp/scores_test_output.png` |
+| `scripts/test_scores_volleyball.py` | Mocked volleyball-specific scenarios (5 cases) | `/tmp/scores_volleyball_test.png` |
+| `scripts/test_scores_layouts.py` | Mocked showcase of all 4 layouts across all sports | `/tmp/scores_layouts_showcase.png` |
 
-### Scenarios
+### Layout showcase scenarios (`test_scores_layouts.py`)
+
+| # | Label | Layout | What it covers |
+|---|-------|--------|----------------|
+| 1 | Blackhawks live – hockey | `single` | Live NHL game, full-screen card |
+| 2 | Pacers won – basketball | `single` | Final NBA game, winner highlighted |
+| 3 | White Sox live – baseball | `single` | Live MLB game |
+| 4 | Ball State live – volleyball | `single` | Live volleyball with set-by-set scores; live set highlighted green |
+| 5 | Cubs final + Pacers live | `split` | Two games, two sports simultaneously |
+| 6 | Hawks + Pacers + Cubs | `grid` | Three-game grid |
+| 7 | Hawks + Pacers + White Sox + Cubs | `grid` | Four-game grid; two MLB teams in one scoreboard call |
+| 8 | No active games | `empty` | Upcoming schedule for all 8 teams; schedule endpoint mocked with real future dates |
+
+### Volleyball scenarios (`test_scores_volleyball.py`)
 
 | # | Label | Layout | What it covers |
 |---|-------|--------|----------------|
@@ -68,6 +85,23 @@ Runs five scenarios by mocking `requests.get` and rendering the plugin directly 
 
 ### Running
 ```bash
-python scripts/test_scores_volleyball.py
+PYTHONPATH=src .venv/bin/python3 scripts/test_scores_layouts.py
+PYTHONPATH=src .venv/bin/python3 scripts/test_scores_volleyball.py
+PYTHONPATH=src .venv/bin/python3 scripts/test_scores.py
 ```
-Requires Chrome/Chromium on the host (path is hardcoded to the macOS Google Chrome app bundle in the script). Output is opened automatically with the default image viewer.
+Requires `chromium`, `chromium-headless-shell`, or `chrome` on `PATH`. Output is opened automatically with the default image viewer.
+
+**macOS with Google Chrome:** `test_scores_volleyball.py` and `test_scores_layouts.py` already monkey-patch the browser finder to use `/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`. For `test_scores.py`, symlink Chrome into a directory on your PATH:
+```bash
+sudo ln -sf "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" /usr/local/bin/chrome
+```
+
+### Mock data conventions
+
+All mocked scenarios follow the same ESPN API shape. Key things to know when adding new scenarios:
+
+- **Scoreboard events** are keyed by `"{sport}/{league}"` in the `events_by_league` dict passed to `make_mock_get()`. Both teams in a league (e.g. CWS + CHC in `baseball/mlb`) can share a single list.
+- **A game is shown** only if a competitor's `id` matches one of the `TRACKED_TEAMS` ids. Opponent teams need a different id.
+- **`is_active` date check**: `"post"` games must have a `date` within the last 16 hours of wall-clock time, otherwise they are filtered out. Use `RECENT = NOW - 2h` for finals; `LIVE` for in-progress.
+- **Volleyball linescores** are per-competitor, per-set. Each linescore entry needs `value`, `displayValue`, `period.number`, and `winner`. The away and home competitors carry their own separate lists; the plugin zips them by period number.
+- **Schedule mock**: keyed by `"{team_id}/{sport}/{league}"`. Events must have `status.type.state == "pre"` and a future `date` or they are skipped by `_fetch_next_game`.
