@@ -201,7 +201,8 @@ class Scores(BasePlugin):
             return None
 
         for event in events:
-            if event.get("status", {}).get("type", {}).get("state") != "pre":
+            comp = event.get("competitions", [{}])[0]
+            if comp.get("status", {}).get("type", {}).get("state") != "pre":
                 continue
             try:
                 start_utc = datetime.fromisoformat(event["date"].replace("Z", "+00:00"))
@@ -216,7 +217,7 @@ class Scores(BasePlugin):
                     else local.strftime("%-I:%M %p")
                 )
 
-                competitors = event.get("competitions", [{}])[0].get("competitors", [])
+                competitors = comp.get("competitors", [])
                 our_c = next((c for c in competitors if c.get("id") == team["id"]), None)
                 opp_c = next((c for c in competitors if c.get("id") != team["id"]), None)
                 if not opp_c:
