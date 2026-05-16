@@ -11,6 +11,8 @@ body {
     align-self: stretch;
     display: flex;
     flex-direction: column;
+    padding: 0 2vw;
+    box-sizing: border-box;
 }
 
 /* ── Game Card ───────────────────────────────────────────────────────────── */
@@ -297,8 +299,8 @@ body {
 
 .up-opp {
     font-size: 2.1vw;
-    font-weight: 500;
-    color: rgba(0, 0, 0, 0.6);
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.85);
     flex: 1;
 }
 
