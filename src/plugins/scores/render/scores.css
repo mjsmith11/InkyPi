@@ -312,7 +312,8 @@ body {
 
 .up-date {
     font-size: 1.6vw;
-    color: rgba(0, 0, 0, 0.7);
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.85);
 }
 
 .up-time {
