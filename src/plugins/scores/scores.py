@@ -11,7 +11,7 @@ TRACKED_TEAMS = [
     {"name": "Chicago White Sox",      "abbreviation": "CWS",  "sport": "baseball",    "league": "mlb",                       "id": "4"},
     {"name": "Chicago Cubs",           "abbreviation": "CHC",  "sport": "baseball",    "league": "mlb",                       "id": "16"},
     {"name": "Indianapolis Colts",     "abbreviation": "IND",  "sport": "football",    "league": "nfl",                       "id": "11"},
-    {"name": "Indiana Pacers",         "abbreviation": "IND",  "sport": "basketball",  "league": "nba",                       "id": "15"},
+    {"name": "Indiana Pacers",         "abbreviation": "IND",  "sport": "basketball",  "league": "nba",                       "id": "11"},
     {"name": "Purdue Boilermakers",    "abbreviation": "PUR",  "sport": "basketball",  "league": "mens-college-basketball",   "id": "2509"},
     {"name": "Chicago Blackhawks",     "abbreviation": "CHI",  "sport": "hockey",      "league": "nhl",                       "id": "4"},
     {"name": "Valparaiso Beacons",     "abbreviation": "VAL",  "sport": "volleyball",  "league": "womens-college-volleyball", "id": "2674"},

@@ -75,7 +75,7 @@ T = {
     "cws": {"id": "4",    "name": "Chicago White Sox",   "abbr": "CWS", "color": "000000", "logo": "https://a.espncdn.com/i/teamlogos/mlb/500/cws.png"},
     "chc": {"id": "16",   "name": "Chicago Cubs",        "abbr": "CHC", "color": "0E3386", "logo": "https://a.espncdn.com/i/teamlogos/mlb/500/chc.png"},
     "ind": {"id": "11",   "name": "Indianapolis Colts",  "abbr": "IND", "color": "003B75", "logo": "https://a.espncdn.com/i/teamlogos/nfl/500/ind.png"},
-    "pac": {"id": "15",   "name": "Indiana Pacers",      "abbr": "IND", "color": "002D62", "logo": "https://a.espncdn.com/i/teamlogos/nba/500/ind.png"},
+    "pac": {"id": "11",   "name": "Indiana Pacers",      "abbr": "IND", "color": "002D62", "logo": "https://a.espncdn.com/i/teamlogos/nba/500/ind.png"},
     "pur": {"id": "2509", "name": "Purdue Boilermakers", "abbr": "PUR", "color": "CEB888", "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2509.png"},
     "chi": {"id": "4",    "name": "Chicago Blackhawks",  "abbr": "CHI", "color": "CF0A2C", "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/chi.png"},
     "val": {"id": "2674", "name": "Valparaiso Beacons",  "abbr": "VAL", "color": "5B2D8E", "logo": "https://a.espncdn.com/i/teamlogos/ncaa/500/2674.png"},
@@ -159,13 +159,14 @@ def make_upcoming_event(team, opp, is_home, date_str):
                          "color": opp["color"], "logo": opp["logo"]}, "linescores": []}
     return {"id": f"up_{our_id}", "date": date_str,
             "status": {"type": {"state": "pre", "shortDetail": "7:05 PM CT"}},
-            "competitions": [{"competitors": [our_comp, opp_comp]}]}
+            "competitions": [{"competitors": [our_comp, opp_comp],
+                              "status": {"type": {"state": "pre"}}}]}
 
 SCHEDULE = {
     "4/baseball/mlb":    [make_upcoming_event(T["cws"], O["det"], True,  FUTURE)],
     "16/baseball/mlb":   [make_upcoming_event(T["chc"], O["mil"], False, FUTURE)],
     "11/football/nfl":   [make_upcoming_event(T["ind"], O["jax"], True,  FUTURE)],
-    "15/basketball/nba": [make_upcoming_event(T["pac"], O["mia"], False, FUTURE)],
+    "11/basketball/nba": [make_upcoming_event(T["pac"], O["mia"], False, FUTURE)],
     "2509/basketball/mens-college-basketball": [],
     "4/hockey/nhl":      [make_upcoming_event(T["chi"], O["min"], True,  FUTURE)],
     "2674/volleyball/womens-college-volleyball": [],

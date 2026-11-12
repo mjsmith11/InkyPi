@@ -23,7 +23,7 @@ Eight hardcoded teams, each carrying `sport`, `league`, and ESPN `id`:
 | Chicago White Sox | baseball | mlb | 4 |
 | Chicago Cubs | baseball | mlb | 16 |
 | Indianapolis Colts | football | nfl | 11 |
-| Indiana Pacers | basketball | nba | 15 |
+| Indiana Pacers | basketball | nba | 11 |
 | Purdue Boilermakers | basketball | mens-college-basketball | 2509 |
 | Chicago Blackhawks | hockey | nhl | 4 |
 | Valparaiso Beacons | volleyball | womens-college-volleyball | 2674 |
